@@ -90,17 +90,21 @@ def create_hybrid_image(image1, image2, filter):
 
     ############################
     ### TODO: YOUR CODE HERE ###
-
+    mean_orig = np.mean(image1)
 
     # Apply Gaussian filter to image1
     low_frequencies = my_imfilter(image1, filter)
 
-    # Apply Laplacian filter to image2 to obtain high-frequency content
-    laplacian_filter = np.array([[0, 1, 0], [1, -4, 1], [0, 1, 0]])
-    high_frequencies = image2 - my_imfilter(image2, laplacian_filter)
+    high_frequencies = image2 - my_imfilter(image2, filter)
 
+    mean_high = np.mean(high_frequencies)
+    high_frequencies = high_frequencies + (mean_orig - mean_high)
+    high_frequencies = np.clip(high_frequencies, 0, 1)
     # Create hybrid image by adding low and high frequency components
     hybrid_image = np.clip(low_frequencies + high_frequencies, 0, 1)
+    gamma = 0.9
+    hybrid_image = np.power(hybrid_image, gamma)
+    hybrid_image = hybrid_image - mean_orig
     ### END OF STUDENT CODE ####
     ############################
 
